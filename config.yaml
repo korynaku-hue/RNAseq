@@ -3,6 +3,7 @@ paths:
   out_dir: "results"
   genome_gz: "reference/GRCh38.primary_assembly.genome.fa.gz"
   gtf_gz: "reference/gencode.v50.basic.annotation.gtf.gz"
+  transcriptome_gz: "reference/gencode.v50.transcripts.fa.gz"
 
 params:
   threads: 4
