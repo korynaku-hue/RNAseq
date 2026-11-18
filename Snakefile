@@ -37,7 +37,7 @@ rule trim_reads:
     threads: THREADS
     conda: "env.yaml"
     shell:
-        "AdapterRemoval --file1 {input.r1} --file2 {input.r2} "
+        "adapterremoval --file1 {input.r1} --file2 {input.r2} "
         "--basename {OUT_DIR}/02_trimmed/{wildcards.sample} "
         "--threads {threads} --gzip"
 
