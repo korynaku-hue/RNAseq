@@ -136,3 +136,45 @@ rule kallisto_quant:
 #--ALIGNMENT QUALITY ASSESSMENT-------------------------------------
 
 rule rseqc_sample:
+    input:
+        bam = f"{OUT_DIR}/05_alignment/{{sample}}.bam",
+        bai = f"{OUT_DIR}/05_alignment/{{sample}}.bam.bai",
+        bed = f"{OUT_DIR}/00_reference/annotation.bed"
+    output:
+        stat = f"{OUT_DIR}/08_rseqc/{{sample}}.bam_stat.txt",
+        strand = f"{OUT_DIR}/08_rseqc/{{sample}}.infer_experiment.txt",
+        dist = f"{OUT_DIR}/08_rseqc/{{sample}}.read_distribution.txt",
+        inner = f"{OUT_DIR}/08_rseqc/{{sample}}.inner_distance_freq.txt"
+    conda: "env.yaml"
+    shell:
+        "bam_stat.py -i {input.bam} > {output.stat} && "
+        "infer_experiment.py -r {input.bed} -i {input.bam} > {output.strand} && read_distribution.py -r {input.bed} -i {input.bam} > {output.dist} && "
+        "inner_distance.py -r {input.bed} -i {input.bam} -o {OUT_DIR}/08_rseqc/{wildcards.sample}"
+
+rule rseqc_genebody:
+    input:
+        bams = expand(f"{OUT_DIR}/05_alignment/{{sample}}.bam", sample=SAMPLES),
+        bais = expand(f"{OUT_DIR}/05_alignment/{{sample}}.bam.bai", sample=SAMPLES),
+        bed = f"{OUT_DIR}/00_reference/annotation.bed"
+    output:
+        f"{OUT_DIR}/08_rseqc/all_samples.geneBodyCoverage.curves.pdf"
+    params:
+        bam_csv = ",".join(expand(f"{OUT_DIR}/05_alignment/{{sample}}.bam", sample=SAMPLES))
+    conda: "env.yaml"
+    shell:
+        "geneBody_coverage.py -r {input.bed} -i {params.bam_csv} -o {OUT_DIR}/08_rseqc/all_samples"
+
+rule deeptools_qc:
+    input:
+        bams = expand(f"{OUT_DIR}/05_alignment/{{sample}}.bam", sample=SAMPLES),
+        bais = expand(f"{OUT_DIR}/05_alignment/{{sample}}.bam.bai", sample=SAMPLES)
+    output:
+        npz = f"{OUT_DIR}/09_deeptools/results.npz",
+        corr = f"{OUT_DIR}/09_deeptools/correlation_heatmap.pdf",
+        pca = f"{OUT_DIR}/09_deeptools/pca_plot.pdf"
+    threads: THREADS
+    conda: "env.yaml"
+    shell:
+        "multiBamSummary bins --bamfiles {input.bams} -p {threads} -o {output.npz} && "
+        "plotCorrelation -in {output.npz} --corMethod pearson --whatToPlot heatmap --plotNumbers -o {output.corr} && "
+        "plotPCA -in {output.npz} -o {output.pca}"
