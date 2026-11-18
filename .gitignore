@@ -1,4 +1,5 @@
 raw_data/
 reference/
 fasterq.tmp.*/
-
+*.err
+*.out
