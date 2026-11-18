@@ -101,3 +101,23 @@ rule feature_counts:
 
 #--Alignment-free quantification-----------------------------------------
 
+rule kallisto_index:
+    input:
+        config["paths"]["transcriptome_gz"]
+    output:
+        f"{OUT_DIR}/04_index/transcriptome.idx"
+    conda: "env.yaml"
+    shell:
+        "kallisto index -i {output} {input}"
+
+rule kallisto_quant:
+    input:
+        r1 = f"{OUT_DIR}/02_trimmed/{{sample}}.pair1.truncated.gz",
+        r2 = f"{OUT_DIR}/02_trimmed/{{sample}}.pair2.truncated.gz",
+        idx = f"{OUT_DIR}/04_index/transcriptome.idx"
+    output:
+        f"{OUT_DIR}/07_kallisto/{{sample}}/abundance.tsv"
+    threads: THREADS
+    conda: "env.yaml"
+    shell:
+        "kallisto quant -i {input.idx} -o {OUT_DIR}/07_kallisto/{wildcards.sample} -t {threads} {input.r1} {input.r2}"
