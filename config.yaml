@@ -1,0 +1,6 @@
+paths:
+  raw_dir: "raw_data"
+  out_dir: "results"
+
+params:
+  threads: 4

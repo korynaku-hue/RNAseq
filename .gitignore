@@ -3,3 +3,4 @@ reference/
 fasterq.tmp.*/
 *.err
 *.out
+.snakemake/
