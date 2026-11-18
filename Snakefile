@@ -10,7 +10,8 @@ rule all:
     input:
         expand(f"{OUT_DIR}/01_qc_raw/{{sample}}_{{read}}_fastqc.html",sample=SAMPLES, read=[1, 2]),
         expand(f"{OUT_DIR}/03_qc_trimmed/{{sample}}.pair{{read}}.truncated_fastqc.html", sample=SAMPLES, read=[1, 2]),
-        f"{OUT_DIR}/06_counts/gene_counts.txt"
+        f"{OUT_DIR}/06_counts/gene_counts.txt",
+        expand(f"{OUT_DIR}/07_kallisto/{{sample}}/abundance.tsv", sample=SAMPLES)
 
 #--READ PREPROCESSING--------------------------------------------------------
 
@@ -97,3 +98,6 @@ rule feature_counts:
     conda: "env.yaml"
     shell:
         "featureCounts -T {threads} -p --countReadPairs -t exon -g gene_id -a {input.gtf} -o {output} {input.bam}"
+
+#--Alignment-free quantification-----------------------------------------
+
