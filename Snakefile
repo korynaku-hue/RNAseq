@@ -8,17 +8,9 @@ INDEX = multiext(f"{OUT_DIR}/04_index/genome",".1.ht2", ".2.ht2", ".3.ht2", ".4.
 
 rule all:
     input:
-        expand(f"{OUT_DIR}/01_qc_raw/{{sample}}_{{read}}_fastqc.html",sample=SAMPLES, read=[1, 2]),
-        expand(f"{OUT_DIR}/03_qc_trimmed/{{sample}}.pair{{read}}.truncated_fastqc.html", sample=SAMPLES, read=[1, 2]),
-        f"{OUT_DIR}/06_counts/gene_counts.txt",
-        expand(f"{OUT_DIR}/07_kallisto/{{sample}}/abundance.tsv", sample=SAMPLES),
-        expand(f"{OUT_DIR}/08_rseqc/{{sample}}.bam_stat.txt", sample=SAMPLES),
-        expand(f"{OUT_DIR}/08_rseqc/{{sample}}.infer_experiment.txt", sample=SAMPLES),
-        expand(f"{OUT_DIR}/08_rseqc/{{sample}}.read_distribution.txt", sample=SAMPLES),
-        expand(f"{OUT_DIR}/08_rseqc/{{sample}}.inner_distance_freq.txt", sample=SAMPLES),
-        f"{OUT_DIR}/08_rseqc/all_samples.geneBodyCoverage.curves.pdf",
         f"{OUT_DIR}/09_deeptools/correlation_heatmap.pdf",
         f"{OUT_DIR}/09_deeptools/pca_plot.pdf",
+        f"{OUT_DIR}/10_multiqc/multiqc_report.html"
 
 
 #--READ PREPROCESSING--------------------------------------------------------
@@ -183,8 +175,8 @@ rule deeptools_qc:
 
 rule multiqc:
     input: 
-        expand(f"{OUT_DIR}/01_qc_raw/{{sample}}_{{read}}fastqc.html", sample=SAMPLES),
-        expand(f"{OUT_DIR}/03_qc_trimmed/{{sample}}.pair{{read}}.truncated_fastqc.html", sample=SAMPLES),
+        expand(f"{OUT_DIR}/01_qc_raw/{{sample}}_{{read}}_fastqc.html", sample=SAMPLES, read=[1, 2]),
+        expand(f"{OUT_DIR}/03_qc_trimmed/{{sample}}.pair{{read}}.truncated_fastqc.html", sample=SAMPLES, read=[1, 2]),
         f"{OUT_DIR}/06_counts/gene_counts.txt",
         expand(f"{OUT_DIR}/07_kallisto/{{sample}}/abundance.tsv", sample=SAMPLES),
         expand(f"{OUT_DIR}/08_rseqc/{{sample}}.bam_stat.txt", sample=SAMPLES),
