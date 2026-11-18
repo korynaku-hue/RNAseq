@@ -1,2 +1,4 @@
-*.bam
-*.sam
+raw_data/
+reference/
+fasterq.tmp.*/
+
