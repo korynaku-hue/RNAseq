@@ -25,7 +25,7 @@ rule fastqc_raw:
     threads: THREADS
     conda: "env.yaml"
     shell:
-        "fastqc -t {threads} -outdir {OUT_DIR}/01_qc_raw {input.r1} {input.r2}"
+        "fastqc -t {threads} --outdir {OUT_DIR}/01_qc_raw {input.r1} {input.r2}"
 
 rule trim_reads:
     input:
@@ -51,7 +51,7 @@ rule fastqc_trimmed:
     threads: THREADS
     conda: "env.yaml"
     shell:
-        "fastqc -t {threads} -outdir {OUT_DIR}/03_qc_trimmed {input.r1} {input.r2}"
+        "fastqc -t {threads} --outdir {OUT_DIR}/03_qc_trimmed {input.r1} {input.r2}"
 
 #--ALIGNMENT-BASED QUANTIFICATION-------------------------------------------
 
