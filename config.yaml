@@ -4,6 +4,7 @@ paths:
   genome_gz: "reference/GRCh38.primary_assembly.genome.fa.gz"
   gtf_gz: "reference/gencode.v50.basic.annotation.gtf.gz"
   transcriptome_gz: "reference/gencode.v50.transcripts.fa.gz"
+  housekeeping_bed_url: "https://sourceforge.net/projects/rseqc/files/BED/Human_Homo_sapiens/hg38.HouseKeepingGenes.bed.gz/download"
 
 params:
   threads: 4

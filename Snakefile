@@ -32,8 +32,8 @@ rule trim_reads:
         r1 = f"{RAW_DIR}/{{sample}}_1.fastq",
         r2 = f"{RAW_DIR}/{{sample}}_2.fastq"
     output:
-        r1 = f"{OUT_DIR}/02_trimmed/{{sample}}.pair1.truncated.gz",
-        r2 = f"{OUT_DIR}/02_trimmed/{{sample}}.pair2.truncated.gz"
+        r1 = f"{OUT_DIR}/02_trimmed/{{sample}}.r1.fastq.gz",
+        r2 = f"{OUT_DIR}/02_trimmed/{{sample}}.r2.fastq.gz"
     threads: THREADS
     conda: "env.yaml"
     shell:
@@ -43,11 +43,11 @@ rule trim_reads:
 
 rule fastqc_trimmed:
     input:
-        r1 = f"{OUT_DIR}/02_trimmed/{{sample}}.pair1.truncated.gz",
-        r2 = f"{OUT_DIR}/02_trimmed/{{sample}}.pair2.truncated.gz"
+        r1 = f"{OUT_DIR}/02_trimmed/{{sample}}.r1.fastq.gz",
+        r2 = f"{OUT_DIR}/02_trimmed/{{sample}}.r2.fastq.gz"
     output:
-        f"{OUT_DIR}/03_qc_trimmed/{{sample}}.pair1.truncated_fastqc.html",
-        f"{OUT_DIR}/03_qc_trimmed/{{sample}}.pair2.truncated_fastqc.html"
+        f"{OUT_DIR}/03_qc_trimmed/{{sample}}.r1_fastqc.html",
+        f"{OUT_DIR}/03_qc_trimmed/{{sample}}.r2_fastqc.html"
     threads: THREADS
     conda: "env.yaml"
     shell:
@@ -80,8 +80,8 @@ rule hisat2_index:
 
 rule hisat2_align:
     input:
-        r1 = f"{OUT_DIR}/02_trimmed/{{sample}}.pair1.truncated.gz",
-        r2 = f"{OUT_DIR}/02_trimmed/{{sample}}.pair2.truncated.gz",
+        r1 = f"{OUT_DIR}/02_trimmed/{{sample}}.r1.fastq.gz",
+        r2 = f"{OUT_DIR}/02_trimmed/{{sample}}.r2.fastq.gz",
         idx = INDEX
     output:
         bam = f"{OUT_DIR}/05_alignment/{{sample}}.bam",
@@ -115,8 +115,8 @@ rule kallisto_index:
 
 rule kallisto_quant:
     input:
-        r1 = f"{OUT_DIR}/02_trimmed/{{sample}}.pair1.truncated.gz",
-        r2 = f"{OUT_DIR}/02_trimmed/{{sample}}.pair2.truncated.gz",
+        r1 = f"{OUT_DIR}/02_trimmed/{{sample}}.r1.fastq.gz",
+        r2 = f"{OUT_DIR}/02_trimmed/{{sample}}.r2.fastq.gz",
         idx = f"{OUT_DIR}/04_index/transcriptome.idx"
     output:
         f"{OUT_DIR}/07_kallisto/{{sample}}/abundance.tsv"
@@ -143,11 +143,19 @@ rule rseqc_sample:
         "infer_experiment.py -r {input.bed} -i {input.bam} > {output.strand} && read_distribution.py -r {input.bed} -i {input.bam} > {output.dist} && "
         "inner_distance.py -r {input.bed} -i {input.bam} -o {OUT_DIR}/08_rseqc/{wildcards.sample}"
 
+rule download_hk_bed:
+    output:
+        f"{OUT_DIR}/00_reference/hg38_hk.bed"
+    params:
+        url = config["paths"]["housekeeping_bed_url"]
+    shell:
+        "wget -qO- {params.url} | gunzip -c > {output}"
+
 rule rseqc_genebody:
     input:
         bams = expand(f"{OUT_DIR}/05_alignment/{{sample}}.bam", sample=SAMPLES),
         bais = expand(f"{OUT_DIR}/05_alignment/{{sample}}.bam.bai", sample=SAMPLES),
-        bed = f"{OUT_DIR}/00_reference/annotation.bed"
+        bed = f"{OUT_DIR}/00_reference/hg38_hk.bed"
     output:
         f"{OUT_DIR}/08_rseqc/all_samples.geneBodyCoverage.curves.pdf"
     params:
@@ -176,7 +184,7 @@ rule deeptools_qc:
 rule multiqc:
     input: 
         expand(f"{OUT_DIR}/01_qc_raw/{{sample}}_{{read}}_fastqc.html", sample=SAMPLES, read=[1, 2]),
-        expand(f"{OUT_DIR}/03_qc_trimmed/{{sample}}.pair{{read}}.truncated_fastqc.html", sample=SAMPLES, read=[1, 2]),
+        expand(f"{OUT_DIR}/03_qc_trimmed/{{sample}}.r{{read}}_fastqc.html", sample=SAMPLES, read=[1, 2]),
         f"{OUT_DIR}/06_counts/gene_counts.txt",
         expand(f"{OUT_DIR}/07_kallisto/{{sample}}/abundance.tsv", sample=SAMPLES),
         expand(f"{OUT_DIR}/08_rseqc/{{sample}}.bam_stat.txt", sample=SAMPLES),
