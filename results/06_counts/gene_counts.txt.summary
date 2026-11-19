@@ -1,0 +1,15 @@
+Status	results/05_alignment/SRR1039522.bam	results/05_alignment/SRR1039513.bam	results/05_alignment/SRR1039520.bam	results/05_alignment/SRR1039512.bam
+Assigned	23399883	14056961	17661473	23426071
+Unassigned_Unmapped	98852	57328	67916	88940
+Unassigned_Read_Type	0	0	0	0
+Unassigned_Singleton	0	0	0	0
+Unassigned_MappingQuality	0	0	0	0
+Unassigned_Chimera	0	0	0	0
+Unassigned_FragmentLength	0	0	0	0
+Unassigned_Duplicate	0	0	0	0
+Unassigned_MultiMapping	2897350	1655687	2199691	2932707
+Unassigned_Secondary	0	0	0	0
+Unassigned_NonSplit	0	0	0	0
+Unassigned_NoFeatures	1295624	614817	934849	1202697
+Unassigned_Overlapping_Length	0	0	0	0
+Unassigned_Ambiguity	1995849	1262431	1553662	2070368

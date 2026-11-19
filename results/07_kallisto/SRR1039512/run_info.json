@@ -1,0 +1,14 @@
+{
+	"n_targets": 670670,
+	"n_bootstraps": 0,
+	"n_processed": 27837980,
+	"n_pseudoaligned": 26454803,
+	"n_unique": 1540601,
+	"p_pseudoaligned": 95.0,
+	"p_unique": 5.5,
+	"kallisto_version": "0.52.0",
+	"index_version": 13,
+	"k-mer length": 31,
+	"start_time": "Wed Nov 18 19:54:22 2026",
+	"call": "kallisto quant -i results/04_index/transcriptome.idx -o results/07_kallisto/SRR1039512 -t 4 results/02_trimmed/SRR1039512.r1.fastq.gz results/02_trimmed/SRR1039512.r2.fastq.gz"
+}
