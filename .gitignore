@@ -4,3 +4,11 @@ fasterq.tmp.*/
 *.err
 *.out
 .snakemake/
+results/00_reference/
+results/01_qc_raw/
+results/02_trimmed/
+results/03_qc_trimmed/
+results/04_index/
+results/05_alignment/
+results/09_deeptools/*.npz
+log.txt
